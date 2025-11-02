@@ -38,6 +38,9 @@ public class RealtimeRankingManager : MonoBehaviour
     {
         GameLogger.LogRankingOpened();
 
+        if (AnalyticsManager.Instance != null)
+            AnalyticsManager.Instance.LogRankingOpened();
+
         if (rankingPanel == null)
         {
             Debug.LogError("rankingPanel is not assigned.");

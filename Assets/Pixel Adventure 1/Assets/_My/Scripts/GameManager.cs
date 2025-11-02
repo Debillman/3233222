@@ -40,6 +40,8 @@ public class GameManager : MonoBehaviour
 
         Init();
         InitStairs();
+
+        AnalyticsManager.Instance?.LogGameStart();
     }
 
     public void Init()
@@ -131,22 +133,17 @@ public class GameManager : MonoBehaviour
         sound.Play();
         sound.volume = 1;
 
-        // 1) Player 이름 가져오기
-        string playerName = PlayerNameManager.GetPlayerName(); // 이미 만들었음: 없으면 "Guest" 반환
-
-        // 2) 로그 전송
+        string playerName = PlayerNameManager.GetPlayerName();
         GameLogger.LogGameOver(playerName, nowScore);
 
-        // 3) 현재 점수 저장 호출
+        // 게임 종료 이벤트 전송
+        AnalyticsManager.Instance?.LogGameEnd();
+
         var rr = FindFirstObjectByType<RealtimeRankingManager>();
         if (rr != null)
-        {
-            rr.SaveScore(playerName, nowScore); // 아래에 제공하는 SaveScore 사용
-        }
+            rr.SaveScore(playerName, nowScore);
         else
-        {
             Debug.LogWarning("RealtimeRankingManager not found in scene.");
-        }
 
         StartCoroutine(ShowGameOver());
     }
