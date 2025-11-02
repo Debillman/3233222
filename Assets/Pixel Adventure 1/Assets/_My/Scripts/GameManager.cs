@@ -134,7 +134,10 @@ public class GameManager : MonoBehaviour
         // 1) Player 이름 가져오기
         string playerName = PlayerNameManager.GetPlayerName(); // 이미 만들었음: 없으면 "Guest" 반환
 
-        // 2) 현재 점수 저장 호출
+        // 2) 로그 전송
+        GameLogger.LogGameOver(playerName, nowScore);
+
+        // 3) 현재 점수 저장 호출
         var rr = FindFirstObjectByType<RealtimeRankingManager>();
         if (rr != null)
         {

@@ -2,8 +2,9 @@
 using Firebase;
 using Firebase.Extensions;
 using Firebase.Analytics;
+using Firebase.Database;
 using System.IO;
-using Newtonsoft.Json.Linq; // JSON 파싱용 (없으면 상단에 using UnityEngine.JsonUtility; 로 바꿔도 됨)
+using Newtonsoft.Json.Linq;
 
 public class FirebaseInit : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class FirebaseInit : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
 
-        // ✅ 직접 파일 읽어서 AppOptions 생성
+        // 직접 파일 읽어서 AppOptions 생성
         string path = Path.Combine(Application.streamingAssetsPath, "google-services-desktop.json");
         if (File.Exists(path))
         {
@@ -53,7 +54,7 @@ public class FirebaseInit : MonoBehaviour
             Debug.LogError("[Firebase] google-services-desktop.json 파일을 찾을 수 없습니다: " + path);
         }
 
-        // ✅ Firebase 정상 초기화 확인
+        // Firebase 정상 초기화 확인
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
         {
             var status = task.Result;
@@ -61,6 +62,23 @@ public class FirebaseInit : MonoBehaviour
             {
                 Debug.Log("[Firebase] 초기화 성공");
                 FirebaseAnalytics.SetAnalyticsCollectionEnabled(true);
+
+                // 같은 DB 인스턴스를 명시적으로 사용
+                var app = FirebaseApp.DefaultInstance;
+                var db = FirebaseDatabase.GetInstance(
+                    app,
+                    "https://endless-3497f-default-rtdb.firebaseio.com/" 
+                );
+
+                db.GetReference("analytics/events/_init/status")
+                  .SetValueAsync("ready")
+                  .ContinueWithOnMainThread(t =>
+                  {
+                      if (t.IsCompleted)
+                          Debug.Log("[Firebase] analytics 폴더 자동 생성 완료");
+                      else
+                          Debug.LogError("[Firebase] analytics 생성 실패: " + t.Exception);
+                  });
             }
             else
             {

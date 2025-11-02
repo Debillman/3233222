@@ -36,6 +36,8 @@ public class RealtimeRankingManager : MonoBehaviour
     // Called by Ranking button (OnClick)
     public void OpenRankingPanel()
     {
+        GameLogger.LogRankingOpened();
+
         if (rankingPanel == null)
         {
             Debug.LogError("rankingPanel is not assigned.");
