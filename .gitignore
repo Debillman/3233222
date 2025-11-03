@@ -1,5 +1,5 @@
 # =========================================
-# Unity 기본
+#  Unity 기본 캐시/빌드 관련
 # =========================================
 [Ll]ibrary/
 [Tt]emp/
@@ -13,7 +13,7 @@ MemoryCaptures/
 Assets/AssetStoreTools*
 
 # =========================================
-# 빌드 결과물
+#  빌드 결과물
 # =========================================
 *.apk
 *.aab
@@ -30,7 +30,7 @@ Assets/AssetStoreTools*
 *.tar.xz
 
 # =========================================
-# IDE 관련 (Visual Studio, Rider, etc.)
+#  IDE / 개발 환경 관련
 # =========================================
 .vs/
 .idea/
@@ -47,29 +47,61 @@ Assets/AssetStoreTools*
 *.opendb
 *.VC.db
 *.VC.opendb
+.vscode/
 
 # =========================================
-# OS 임시파일
+#  OS 임시파일
 # =========================================
 .DS_Store
 Thumbs.db
 desktop.ini
 
 # =========================================
-# Unity Cloud / Collaborate 관련
+#  Unity Collaborate / Cloud 관련
 # =========================================
 .collabignore
 .collab/
-.vscode/
 
 # =========================================
-# 기타
+#  로그 및 기타
 # =========================================
-# Logs
 *.log
-# Crashlytics / Cloud diagnostics
 crashlytics-build.properties
+*.bak
+*.tmp
+*.temp
+*.swp
+*.orig
+*.merge
+*.class
+*.cache
 
-# Firebase large plugin files (too large for GitHub)
-Assets/Firebase/Plugins/x86_64/FirebaseCppApp-13_4_0.bundle
-Assets/Firebase/Plugins/x86_64/FirebaseCppApp-13_4_0.so
+# =========================================
+#  Firebase 관련 (LFS 없이 완전 대응)
+# =========================================
+
+# Firebase 대용량 바이너리 파일 제외 (100MB 제한 우회)
+Assets/Firebase/Plugins/x86_64/FirebaseCppApp-*.bundle
+Assets/Firebase/Plugins/x86_64/FirebaseCppApp-*.so
+Assets/Firebase/Plugins/arm64/FirebaseCppApp-*.so
+Assets/Firebase/Plugins/armeabi-v7a/FirebaseCppApp-*.so
+Assets/Firebase/Plugins/x86/FirebaseCppApp-*.so
+
+# Firebase 자동 생성 파일 (자동으로 Unity가 생성함)
+Assets/**/google-services.xml
+Assets/**/GoogleService-Info.plist
+
+# Firebase 설정 및 스크립트는 반드시 포함
+!Assets/Firebase/
+!Assets/Firebase/Editor/
+!Assets/Firebase/Editor/generate_xml_from_google_services_json.py
+!Assets/Firebase/Plugins/
+!Assets/StreamingAssets/google-services.json
+!Assets/StreamingAssets/google-services-desktop.json
+
+# =========================================
+# Unity Addressables / ShaderCache
+# =========================================
+Assets/AddressableAssetsData/*
+Assets/StreamingAssets/aa/*
+Assets/ShaderCache/*

@@ -1,2 +1,47 @@
-# Auto detect text files and perform LF normalization
+# =========================================
+# 기본 Git 설정
+# =========================================
+# Auto detect text files and normalize line endings to LF
 * text=auto
+
+# =========================================
+# Unity YAML-based assets (머지 도중 깨짐 방지)
+# =========================================
+*.unity     merge=unityyamlmerge eol=lf
+*.prefab    merge=unityyamlmerge eol=lf
+*.asset     merge=unityyamlmerge eol=lf
+*.mat       merge=unityyamlmerge eol=lf
+*.anim      merge=unityyamlmerge eol=lf
+*.controller merge=unityyamlmerge eol=lf
+
+# =========================================
+# C# / 스크립트 / 코드
+# =========================================
+*.cs text diff=csharp eol=lf
+*.shader text diff
+
+# =========================================
+# Binary files (절대 텍스트 변환 금지)
+# =========================================
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.tga binary
+*.psd binary
+*.fbx binary
+*.wav binary
+*.mp3 binary
+*.ogg binary
+*.dll binary
+*.so binary
+*.a binary
+*.bundle binary
+*.pdb binary
+*.exe binary
+
+# =========================================
+# Firebase 관련 (Python, JSON 등)
+# =========================================
+*.json text eol=lf
+*.py text eol=lf
