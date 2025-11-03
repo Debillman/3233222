@@ -23,26 +23,27 @@ public class TimerBarController : MonoBehaviour
 
     void Update()
     {
-        // 게임이 시작된 후 첫 클릭이 발생해야 타이머가 작동합니다.
         if (!isStarted) return;
 
-        // 현재 시간을 1초(TIMEOUT_DURATION)에 맞춰 증가시킵니다.
         currentTime += Time.deltaTime;
-
-        // 경과 시간이 타임아웃 시간을 초과하면 더 이상 증가시키지 않습니다.
         if (currentTime > TIMEOUT_DURATION)
         {
             currentTime = TIMEOUT_DURATION;
         }
 
-        // 게이지 바의 fillAmount를 계산합니다.
-        // 현재 시간 / 전체 시간(1.0초)으로 0.0 ~ 1.0 사이의 비율을 구하고,
-        // 1에서 이 비율을 빼서 시간이 지날수록 줄어들게 만듭니다.
         float fillRatio = 1f - (currentTime / TIMEOUT_DURATION);
-
-        // 이미지의 fillAmount에 적용합니다.
         fillImage.fillAmount = fillRatio;
+
+        // [추가 부분] 게이지가 0이 되면 GameOver 호출
+        if (fillImage.fillAmount <= 0f)
+        {
+            var player = FindFirstObjectByType<Player>();
+            if (player != null)
+                player.CharDie();        // ← 여기서 죽음 애니메이션/이미지 전환까지 모두 처리
+            isStarted = false;           // 중복 호출 방지
+        }
     }
+
 
     // 외부(Player 스크립트)에서 호출하여 타이머를 초기화하는 함수
     public void ResetTimer()

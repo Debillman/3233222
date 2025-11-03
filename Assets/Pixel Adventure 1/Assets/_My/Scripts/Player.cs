@@ -192,7 +192,7 @@ public class Player : MonoBehaviour
     // ===============================================
     // [사망 처리]
     // ===============================================
-    private void CharDie()
+    public void CharDie()
     {
         GameManager.Instance.GameOver();
         anim.SetBool("Die", true);
@@ -208,5 +208,8 @@ public class Player : MonoBehaviour
         Init();
         GameManager.Instance.Init();
         GameManager.Instance.InitStairs();
+
+        // 재시작 이벤트 전송
+        AnalyticsManager.Instance?.LogRestartGame();
     }
 }
