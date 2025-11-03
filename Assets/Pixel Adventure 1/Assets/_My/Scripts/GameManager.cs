@@ -1,7 +1,6 @@
 using UnityEngine;
 using TMPro;
-using System.Collections; 
-using System.Collections.Generic;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,7 +11,7 @@ public class GameManager : MonoBehaviour
     public GameObject[] Stairs;
     public bool[] isTurn;
 
-    private enum State {Start, Left, Right};
+    private enum State { Start, Left, Right };
     private State state;
     private Vector3 oldPosition;
 
@@ -31,19 +30,24 @@ public class GameManager : MonoBehaviour
     public AudioClip bgmSound;
     public AudioClip dieSound;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    // ------------------------------------------------------------------
+    // Start
+    // ------------------------------------------------------------------
     void Start()
     {
         Instance = this;
-
         sound = GetComponent<AudioSource>();
 
         Init();
         InitStairs();
 
+        // 게임 시작 이벤트 전송
         AnalyticsManager.Instance?.LogGameStart();
     }
 
+    // ------------------------------------------------------------------
+    // 초기화
+    // ------------------------------------------------------------------
     public void Init()
     {
         state = State.Start;
@@ -51,24 +55,25 @@ public class GameManager : MonoBehaviour
 
         isTurn = new bool[Stairs.Length];
 
-        for(int i = 0; i < Stairs.Length; i++)
+        for (int i = 0; i < Stairs.Length; i++)
         {
             Stairs[i].transform.position = Vector3.zero;
             isTurn[i] = false;
         }
 
         nowScore = 0;
-
         textShowScore.text = nowScore.ToString();
-
         UI_GameOver.SetActive(false);
 
         sound.clip = bgmSound;
-        sound.Play();
         sound.loop = true;
         sound.volume = 0.2f;
+        sound.Play();
     }
 
+    // ------------------------------------------------------------------
+    // 계단 초기 배치
+    // ------------------------------------------------------------------
     public void InitStairs()
     {
         for (int i = 0; i < Stairs.Length; i++)
@@ -88,28 +93,26 @@ public class GameManager : MonoBehaviour
                     isTurn[i] = false;
                     break;
             }
+
             oldPosition = Stairs[i].transform.position;
 
-            if(i != 0)
+            if (i != 0)
             {
                 int ran = Random.Range(0, 5);
-
-                if(ran < 2 && i < Stairs.Length - 1)
-                {
-                    state = state == State.Left ? State.Right : State.Left;
-                }
+                if (ran < 2 && i < Stairs.Length - 1)
+                    state = (state == State.Left ? State.Right : State.Left);
             }
         }
     }
 
+    // ------------------------------------------------------------------
+    // 새로운 계단 스폰
+    // ------------------------------------------------------------------
     public void SpawnStair(int cnt)
     {
         int ran = Random.Range(0, 5);
-
         if (ran < 2)
-        {
-            state = state == State.Left ? State.Right : State.Left;
-        }
+            state = (state == State.Left ? State.Right : State.Left);
 
         switch (state)
         {
@@ -122,47 +125,62 @@ public class GameManager : MonoBehaviour
                 isTurn[cnt] = false;
                 break;
         }
+
         oldPosition = Stairs[cnt].transform.position;
     }
 
+    // ------------------------------------------------------------------
+    // 게임 오버 처리
+    // ------------------------------------------------------------------
     public void GameOver()
     {
         sound.loop = false;
         sound.Stop();
         sound.clip = dieSound;
-        sound.Play();
         sound.volume = 1;
+        sound.Play();
 
         string playerName = PlayerNameManager.GetPlayerName();
-        GameLogger.LogGameOver(playerName, nowScore);
 
-        // 게임 종료 이벤트 전송
-        AnalyticsManager.Instance?.LogGameEnd();
+        // 게임 오버 이벤트 전송
+        AnalyticsManager.Instance?.LogGameOver(playerName, nowScore);
 
+        // 랭킹 저장
         var rr = FindFirstObjectByType<RealtimeRankingManager>();
         if (rr != null)
             rr.SaveScore(playerName, nowScore);
         else
-            Debug.LogWarning("RealtimeRankingManager not found in scene.");
+            Debug.LogWarning("[GameManager] RealtimeRankingManager not found.");
 
+        // UI 표시 코루틴
         StartCoroutine(ShowGameOver());
     }
 
+    // ------------------------------------------------------------------
+    // 게임 오버 UI 표시
+    // ------------------------------------------------------------------
     IEnumerator ShowGameOver()
     {
         yield return new WaitForSeconds(1f);
 
-        UI_GameOver.SetActive(true);
+        if (UI_GameOver != null)
+            UI_GameOver.SetActive(true);
 
         if (nowScore > maxScore)
-        {
             maxScore = nowScore;
-        }
 
-          textMaxScore.text = maxScore.ToString();
-          textNowScore.text = nowScore.ToString();
+        if (textMaxScore != null)
+            textMaxScore.text = maxScore.ToString();
+
+        if (textNowScore != null)
+            textNowScore.text = nowScore.ToString();
+
+        Debug.Log("[GameManager] ShowGameOver 실행됨");
     }
 
+    // ------------------------------------------------------------------
+    // 점수 추가
+    // ------------------------------------------------------------------
     public void AddScore()
     {
         nowScore++;
