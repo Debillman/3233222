@@ -18,13 +18,15 @@ public class Player : MonoBehaviour
     private AudioSource sound;
 
     [Header("타이머 관련")]
-    public TimerBarController timerBarController; // Inspector 연결 필요
+    public TimerBarController timerBarController;
     private float lastClickTime;
     private bool isFirstClick = true;
-    private const float TIMEOUT_DURATION = 1.0f; // 1초 타임아웃
+    private const float TIMEOUT_DURATION = 1.0f;
 
     [Header("잔상 효과")]
-    public AfterimageManager afterimageManager; // Inspector에서 연결
+    public AfterimageManager afterimageManager;
+
+    public bool IsDead => isDie;
 
     void Start()
     {
@@ -37,52 +39,46 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        // ① PlayerNamePanel이 열려 있다면 조작 금지
         GameObject playerNamePanel = GameObject.Find("PlayerNamePanel");
         if (playerNamePanel != null && playerNamePanel.activeSelf)
-        {
-            return; // 아직 이름 입력 중이거나 시작 버튼 안 누름
-        }
+            return;
 
-        // ② InputField에 포커스가 가 있으면 조작 금지
         if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null)
         {
             var selected = EventSystem.current.currentSelectedGameObject;
             if (selected.GetComponent<TMPro.TMP_InputField>() != null)
-            {
                 return;
-            }
         }
 
-        // ③ 좌/우 입력 처리 (A, D, 방향키)
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
         {
-            isTurn = true; // 왼쪽
+            isTurn = true;
             spriteRenderer.flipX = isTurn;
             CharMove();
 
             if (timerBarController != null)
-                timerBarController.ResetTimer();
+            {
+                timerBarController.ResetTimer();      // 게이지 리셋
+                timerBarController.EnableDeathCheck(); // 첫 이동 후부터 사망 판정 활성
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
         {
-            isTurn = false; // 오른쪽
+            isTurn = false;
             spriteRenderer.flipX = isTurn;
             CharMove();
 
             if (timerBarController != null)
+            {
                 timerBarController.ResetTimer();
+                timerBarController.EnableDeathCheck();
+            }
         }
 
-        // 타임아웃 체크
         CheckTimeout();
     }
 
-
-    // ===============================================
-    // [타임아웃 관련 로직]
-    // ===============================================
     private void UpdateClickTime()
     {
         if (isDie) return;
@@ -97,14 +93,10 @@ public class Player : MonoBehaviour
 
         if (Time.time > lastClickTime + TIMEOUT_DURATION)
         {
-            Debug.Log("타임아웃! 1초 동안 입력이 없어 사망 처리됩니다.");
             CharDie();
         }
     }
 
-    // ===============================================
-    // [초기화 로직]
-    // ===============================================
     private void Init()
     {
         anim.SetBool("Die", false);
@@ -119,28 +111,21 @@ public class Player : MonoBehaviour
         isFirstClick = true;
         lastClickTime = 0f;
 
-        if (timerBarController != null)
-            timerBarController.ResetTimer();
+        // 시작 시 타이머를 강제로 리셋하지 않음
+        // timerBarController?.ResetTimer();  <- 제거
 
-        // 캐릭터 부활 시 잔상 중지
-        if (afterimageManager != null)
-            afterimageManager.StopAfterimage();
+        afterimageManager?.StopAfterimage();
     }
 
-    // ===============================================
-    // [캐릭터 조작]
-    // ===============================================
     public void CharMove()
     {
         if (isDie) return;
 
-        sound.Play();
+        if (sound != null) sound.Play();
         moveCnt++;
         MoveDirection();
 
-        // 이동 시 잔상 시작
-        if (afterimageManager != null)
-            afterimageManager.StartAfterimage();
+        afterimageManager?.StartAfterimage();
 
         if (isFailTurn())
         {
@@ -189,18 +174,15 @@ public class Player : MonoBehaviour
             SpawnCnt = 0;
     }
 
-    // ===============================================
-    // [사망 처리]
-    // ===============================================
     public void CharDie()
     {
+        if (isDie) return;
+
         GameManager.Instance.GameOver();
         anim.SetBool("Die", true);
         isDie = true;
 
-        // 사망 시 잔상 중지
-        if (afterimageManager != null)
-            afterimageManager.StopAfterimage();
+        afterimageManager?.StopAfterimage();
     }
 
     public void ButtonRestart()
@@ -208,8 +190,5 @@ public class Player : MonoBehaviour
         Init();
         GameManager.Instance.Init();
         GameManager.Instance.InitStairs();
-
-        // 재시작 이벤트 전송
-        AnalyticsManager.Instance?.LogRestartGame();
     }
 }
