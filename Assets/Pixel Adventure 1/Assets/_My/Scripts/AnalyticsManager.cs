@@ -1,7 +1,6 @@
 using UnityEngine;
 using Unity.Services.Core;
 using Unity.Services.Analytics;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 public class AnalyticsManager : MonoBehaviour
@@ -29,9 +28,11 @@ public class AnalyticsManager : MonoBehaviour
         try
         {
             await UnityServices.InitializeAsync();
+
 #pragma warning disable 618
             AnalyticsService.Instance.StartDataCollection();
 #pragma warning restore 618
+
             Debug.Log("[Unity Analytics] 초기화 완료");
         }
         catch (System.Exception ex)
@@ -44,7 +45,7 @@ public class AnalyticsManager : MonoBehaviour
     // 커스텀 이벤트
     // ------------------------------------------------------------
 
-    // (1) 게임 시작 시 (앱 최초 실행 후 첫 플레이)
+    // (1) 게임 시작 시
     public void LogGameStart()
     {
         AnalyticsService.Instance.RecordEvent(new CustomEvent("game_start"));
@@ -52,25 +53,31 @@ public class AnalyticsManager : MonoBehaviour
         Debug.Log("[Unity Analytics] game_start 이벤트 전송됨");
     }
 
-    // (2) 게임 오버 시 (사망 시)
+    // (2) 게임 오버 시
     public void LogGameOver(string playerName, int score)
     {
         var gameOverEvent = new CustomEvent("game_over_v2")
         {
             { "player_name", playerName },
-            { "userScore", score  }
+            { "userScore", score }
         };
+
         AnalyticsService.Instance.RecordEvent(gameOverEvent);
         AnalyticsService.Instance.Flush();
         Debug.Log($"[Unity Analytics] game_over_v2 이벤트 전송됨 ({playerName} / {score})");
     }
 
     // (3) 재시작 시 (Restart 버튼 클릭)
-    public void LogRestartGame()
+    public void LogRestartGame(int retryCount)
     {
-        AnalyticsService.Instance.RecordEvent(new CustomEvent("restart_game"));
+        var restartEvent = new CustomEvent("restart_game")
+        {
+            { "retry_count", retryCount }
+        };
+
+        AnalyticsService.Instance.RecordEvent(restartEvent);
         AnalyticsService.Instance.Flush();
-        Debug.Log("[Unity Analytics] restart_game 이벤트 전송됨");
+        Debug.Log($"[Unity Analytics] restart_game 이벤트 전송됨 (retry_count = {retryCount})");
     }
 
     // (4) 랭킹 창 열 때

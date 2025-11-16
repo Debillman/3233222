@@ -88,6 +88,10 @@ public class GameManager : MonoBehaviour
             }
             oldPosition = Stairs[i].transform.position;
 
+            var stair = Stairs[i].GetComponent<Stair>();
+            if (stair != null)
+                stair.ResetStair();
+
             if (i != 0)
             {
                 int ran = Random.Range(0, 5);
@@ -120,7 +124,13 @@ public class GameManager : MonoBehaviour
                 break;
         }
         oldPosition = Stairs[cnt].transform.position;
+
+        var stair = Stairs[cnt].GetComponent<Stair>();
+        if (stair != null)
+            stair.ResetStair();
     }
+
+
 
     public void GameOver()
     {

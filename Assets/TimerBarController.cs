@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class TimerBarController : MonoBehaviour
 {
     public Image fillImage;
-    private const float TIMEOUT_DURATION = 1.0f;
+    private const float TIMEOUT_DURATION = 0.7f; // ← 1.0f를 0.7f로 변경
     private float currentTime = 0f;
 
     // 타이머는 시작부터 돌려서 게이지는 줄어들게 함
@@ -58,4 +58,6 @@ public class TimerBarController : MonoBehaviour
     {
         hasPlayerMoved = true;
     }
+
+
 }
