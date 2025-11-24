@@ -29,6 +29,26 @@ public class Player : MonoBehaviour
     private const float TIMEOUT_DURATION = 1.0f;
 
     // ----------------------------------------------------
+    // 대마왕 효과
+    // ----------------------------------------------------
+    [Header("조작 혼란 효과(대마왕)")]
+    [Tooltip("기본 조작 혼란 지속 시간(초)")]
+    public float defaultConfuseDuration = 15f;
+
+    // 대마왕 상태일 때 적용할 색
+    public Color confuseTintColor = new Color(0.7f, 0.2f, 1f, 1f); // 보라빛
+
+    [Tooltip("대마왕 상태일 때 사용할 스프라이트 (비워두면 색만 바뀜)")]
+    public Sprite confuseSprite;
+
+    private bool isControlConfused = false; // 조작 반전 여부
+    private float confuseEndTime = 0f;      // 조작 혼란이 끝나는 시각
+
+    // 원래 캐릭터 색/스프라이트 저장용
+    private Color originalColor;
+    private Sprite originalSprite;
+
+    // ----------------------------------------------------
     // 잔상 효과
     // ----------------------------------------------------
     [Header("잔상 효과")]
@@ -44,10 +64,10 @@ public class Player : MonoBehaviour
     [Tooltip("잔상이 켜진 후, 마지막 이동 후 이 시간이 지나면 잔상이 꺼집니다.")]
     public float afterimageDurationAfterLastMove = 1.0f;
 
-    private int continuousMoveCount = 0;   // 연속 이동 횟수
-    private float lastMoveTime = -999f;     // 마지막 이동 시각
+    private int continuousMoveCount = 0;          // 연속 이동 횟수
+    private float lastMoveTime = -999f;           // 마지막 이동 시각(연속 판단용)
     private float lastAfterimageMoveTime = -999f; // 잔상 켜진 상태에서의 마지막 이동 시각
-    private bool afterimageActive = false;  // 현재 잔상 on/off
+    private bool afterimageActive = false;        // 현재 잔상 on/off
 
     public bool IsDead => isDie;
 
@@ -60,11 +80,33 @@ public class Player : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         sound = GetComponent<AudioSource>();
         startPosition = transform.position;
+
+        // 원래 비주얼 저장
+        if (spriteRenderer != null)
+        {
+            originalColor = spriteRenderer.color;
+            originalSprite = spriteRenderer.sprite;
+        }
+
         Init();
     }
 
     void Update()
     {
+        // 0) 대마왕 효과 끝났는지 확인
+        if (isControlConfused && Time.time >= confuseEndTime)
+        {
+            isControlConfused = false;
+
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.color = originalColor;
+                spriteRenderer.sprite = originalSprite;
+            }
+
+            Debug.Log("[Player] 조작 혼란 종료");
+        }
+
         // ① 이름 입력 패널 열려 있으면 조작 막기
         GameObject playerNamePanel = GameObject.Find("PlayerNamePanel");
         if (playerNamePanel != null && playerNamePanel.activeSelf)
@@ -78,41 +120,47 @@ public class Player : MonoBehaviour
                 return;
         }
 
-        // ③ 좌/우 입력 처리
-        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
+        // ③ 좌/우 입력을 먼저 받음
+        bool leftInput = Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A);
+        bool rightInput = Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D);
+
+        // ★ 대마왕 상태면 좌/우 입력을 서로 바꿔치기
+        if (isControlConfused)
+        {
+            bool tmp = leftInput;
+            leftInput = rightInput;
+            rightInput = tmp;
+        }
+
+        // ④ 좌/우 입력 처리 (여기서는 leftInput/rightInput만 사용!)
+        if (leftInput)
         {
             isTurn = true;
             spriteRenderer.flipX = isTurn;
             CharMove();
-
-            if (timerBarController != null)
-            {
-                timerBarController.ResetTimer();
-                timerBarController.EnableDeathCheck(); // 첫 이동 후부터 사망 판정 활성
-            }
+            timerBarController?.ResetTimer();
+            timerBarController?.EnableDeathCheck();
         }
 
-        if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
+        if (rightInput)
         {
             isTurn = false;
             spriteRenderer.flipX = isTurn;
             CharMove();
-
-            if (timerBarController != null)
-            {
-                timerBarController.ResetTimer();
-                timerBarController.EnableDeathCheck();
-            }
+            timerBarController?.ResetTimer();
+            timerBarController?.EnableDeathCheck();
         }
 
-        // ④ 잔상 자동 종료 체크
+
+        // 잔상 자동 종료 체크
         if (afterimageActive)
         {
+            // 마지막 잔상 이동 이후 일정 시간이 지나면 잔상 끄기
             if (Time.time - lastAfterimageMoveTime >= afterimageDurationAfterLastMove)
             {
                 afterimageActive = false;
-                continuousMoveCount = 0;
                 afterimageManager?.StopAfterimage();
+                continuousMoveCount = 0;
             }
         }
 
@@ -158,10 +206,17 @@ public class Player : MonoBehaviour
         lastMoveTime = -999f;
         lastAfterimageMoveTime = -999f;
 
+        // 대마왕 상태 리셋
+        isControlConfused = false;
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = originalColor;
+            spriteRenderer.sprite = originalSprite;
+        }
+
         // 시작 시 타이머를 강제로 리셋하지 않음
         // timerBarController?.ResetTimer();
 
-        // 부활 시 잔상 중지
         afterimageManager?.StopAfterimage();
     }
 
@@ -204,7 +259,7 @@ public class Player : MonoBehaviour
             afterimageManager?.StartAfterimage();
         }
 
-        // 잔상이 켜져 있는 동안 이동했다면 마지막 이동 시각 갱신
+        // 잔상이 켜져 있는 동안 이동했다면 마지막 잔상 이동 시각 갱신
         if (afterimageActive)
         {
             lastAfterimageMoveTime = now;
@@ -272,7 +327,36 @@ public class Player : MonoBehaviour
         afterimageActive = false;
         continuousMoveCount = 0;
         afterimageManager?.StopAfterimage();
+
+        // 대마왕 상태 정리
+        isControlConfused = false;
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = originalColor;
+            spriteRenderer.sprite = originalSprite;
+        }
     }
+
+    // Stair 에서 호출하는 대마왕 발동 함수
+    public void ActivateConfuseControl(float duration)
+    {
+        if (duration <= 0f)
+            duration = defaultConfuseDuration;   // 예: 15초
+
+        isControlConfused = true;
+        confuseEndTime = Time.time + duration;
+
+        // 비주얼 변경 (보라색 + 스프라이트 교체)
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = confuseTintColor;   // Inspector에서 보라색으로 설정된 값
+            if (confuseSprite != null)
+                spriteRenderer.sprite = confuseSprite;
+        }
+
+        Debug.Log($"[Player] 조작 혼란 시작! {duration}초 동안 좌우 반전");
+    }
+
 
     public void ButtonRestart()
     {

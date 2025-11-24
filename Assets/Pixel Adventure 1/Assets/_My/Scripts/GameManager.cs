@@ -14,6 +14,12 @@ public class GameManager : MonoBehaviour
     private State state;
     private Vector3 oldPosition;
 
+    [Header("특수 계단 등장 확률")]
+    [Range(0f, 1f)]
+    public float confuseStairChance = 0.05f;      // 5% 정도
+    [Range(0f, 1f)]
+    public float memoryDisappearChance = 0.10f;   // 10% 정도
+
     [Header("UI")]
     public GameObject UI_GameOver;
     public TextMeshProUGUI textMaxScore;
@@ -44,6 +50,32 @@ public class GameManager : MonoBehaviour
             hasGameStarted = true;
         }
     }
+
+    // 하나의 계단 GameObject에 대해, 어떤 타입으로 쓸지 랜덤 결정
+    private void RandomizeStairKind(GameObject stairGO)
+    {
+        var stair = stairGO.GetComponent<Stair>();
+        if (stair == null) return;
+
+        float r = Random.value; // 0 ~ 1 사이 랜덤
+
+        if (r < confuseStairChance)
+        {
+            // 대마왕 계단
+            stair.SetKind(StairKind.ConfuseControl);
+        }
+        else if (r < confuseStairChance + memoryDisappearChance)
+        {
+            // 투명(암기) 계단
+            stair.SetKind(StairKind.MemoryDisappear);
+        }
+        else
+        {
+            // 일반 계단
+            stair.SetKind(StairKind.Normal);
+        }
+    }
+
     public void Init()
     {
         state = State.Start;
@@ -77,20 +109,19 @@ public class GameManager : MonoBehaviour
                     Stairs[i].transform.position = new Vector3(0.75f, -0.1f, 0);
                     state = State.Right;
                     break;
+
                 case State.Left:
                     Stairs[i].transform.position = oldPosition + new Vector3(-0.75f, 0.5f, 0);
                     isTurn[i] = true;
                     break;
+
                 case State.Right:
                     Stairs[i].transform.position = oldPosition + new Vector3(0.75f, 0.5f, 0);
                     isTurn[i] = false;
                     break;
             }
-            oldPosition = Stairs[i].transform.position;
 
-            var stair = Stairs[i].GetComponent<Stair>();
-            if (stair != null)
-                stair.ResetStair();
+            oldPosition = Stairs[i].transform.position;
 
             if (i != 0)
             {
@@ -100,6 +131,9 @@ public class GameManager : MonoBehaviour
                     state = state == State.Left ? State.Right : State.Left;
                 }
             }
+
+            // 위치 정해진 후, 이 계단 타입(일반/투명/대마왕)을 랜덤으로 결정 + 초기화
+            RandomizeStairKind(Stairs[i]);
         }
     }
 
@@ -118,19 +152,18 @@ public class GameManager : MonoBehaviour
                 Stairs[cnt].transform.position = oldPosition + new Vector3(-0.75f, 0.5f, 0);
                 isTurn[cnt] = true;
                 break;
+
             case State.Right:
                 Stairs[cnt].transform.position = oldPosition + new Vector3(0.75f, 0.5f, 0);
                 isTurn[cnt] = false;
                 break;
         }
+
         oldPosition = Stairs[cnt].transform.position;
 
-        var stair = Stairs[cnt].GetComponent<Stair>();
-        if (stair != null)
-            stair.ResetStair();
+        // 새로 스폰된 계단도 타입 랜덤 설정 + 초기화
+        RandomizeStairKind(Stairs[cnt]);
     }
-
-
 
     public void GameOver()
     {
@@ -146,7 +179,7 @@ public class GameManager : MonoBehaviour
         var rr = FindFirstObjectByType<RealtimeRankingManager>();
         rr?.SaveScore(playerName, nowScore);
 
-        // Analytics 이벤트 전송
+        // Analytics 이벤트 전송 (game_over_v2)
         AnalyticsManager.Instance?.LogGameOver(playerName, nowScore);
 
         StartCoroutine(ShowGameOver());

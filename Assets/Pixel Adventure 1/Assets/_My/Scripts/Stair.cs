@@ -1,138 +1,178 @@
 using UnityEngine;
 
-/// <summary>
-/// °è´Ü Á¾·ù
-/// </summary>
 public enum StairKind
 {
-    Normal,          // ÀÏ¹İ °è´Ü
-    MemoryDisappear  // ¼­¼­È÷ »ç¶óÁ³´Ù°¡ ¼­¼­È÷ ³ªÅ¸³ª´Â ¾Ï±â¿ë °è´Ü
+    Normal,          // ì¼ë°˜ ê³„ë‹¨
+    MemoryDisappear, // ì„œì„œíˆ ì‚¬ë¼ì¡Œë‹¤ ë‹¤ì‹œ ë‚˜íƒ€ë‚˜ëŠ” ê³„ë‹¨
+    ConfuseControl   // ë°Ÿìœ¼ë©´ ì¢Œìš° ë°˜ì „(ëŒ€ë§ˆì™•)
 }
 
-/// <summary>
-/// °¢ °è´Ü(¹ßÆÇ)¿¡ ºÙ´Â ½ºÅ©¸³Æ®
-/// </summary>
 [RequireComponent(typeof(SpriteRenderer))]
-[RequireComponent(typeof(Collider2D))]
+[RequireComponent(typeof(BoxCollider2D))]
 public class Stair : MonoBehaviour
 {
-    [Header("±âº» ¼³Á¤")]
-    public StairKind stairKind = StairKind.Normal;  // ÀÌ °è´ÜÀÌ ¾î¶² Å¸ÀÔÀÎÁö
+    [Header("ê¸°ë³¸ ì„¤ì •")]
+    public StairKind stairKind = StairKind.Normal;
 
-    [Header("¾Ï±â¿ë(Åõ¸í/ÀçµîÀå) °è´Ü ¼³Á¤")]
-    [Tooltip("¿ÏÀüÈ÷ º¸ÀÌ´Â »óÅÂ¿¡¼­ ¿ÏÀüÈ÷ ¾È º¸ÀÌ´Â »óÅÂ±îÁö °É¸®´Â ½Ã°£(ÃÊ)")]
-    public float fadeOutDuration = 2.0f;   // »ç¶óÁö´Â ¼Óµµ: 2ÃÊ µ¿¾È ¼­¼­È÷
+    [Header("ì•”ê¸°ìš©(íˆ¬ëª…í™”) ê³„ë‹¨ ì„¤ì •")]
+    [Tooltip("ì²˜ìŒ ì™„ì „íˆ ë³´ì´ëŠ” ì‹œê°„(ì´ˆ)")]
+    public float visibleDuration = 0.7f;
 
-    [Tooltip("¿ÏÀüÈ÷ ¾È º¸ÀÌ´Â »óÅÂ¿¡¼­ ´Ù½Ã ¿ÏÀüÈ÷ º¸ÀÌ´Â »óÅÂ±îÁö °É¸®´Â ½Ã°£(ÃÊ)")]
-    public float fadeInDuration = 0.8f;    // ³ªÅ¸³ª´Â ¼Óµµ: 0.8ÃÊ Á¤µµ·Î ºñ±³Àû ºü¸£°Ô
+    [Tooltip("ì„œì„œíˆ ì‚¬ë¼ì§€ëŠ” ì‹œê°„(ì´ˆ)")]
+    public float fadeOutDuration = 0.7f;
+
+    [Tooltip("ì™„ì „íˆ ì•ˆ ë³´ì´ëŠ” ìƒíƒœë¡œ ìœ ì§€ë˜ëŠ” ì‹œê°„(ì´ˆ)")]
+    public float hiddenDuration = 1.5f;
+
+    [Tooltip("ë‹¤ì‹œ ì„œì„œíˆ ë‚˜íƒ€ë‚˜ëŠ” ì‹œê°„(ì´ˆ)")]
+    public float fadeInDuration = 0.7f;
+
+    [Header("ëŒ€ë§ˆì™•(í˜¼ë€) ê³„ë‹¨ ì„¤ì •")]
+    [Tooltip("ì´ ê³„ë‹¨ì´ ëŒ€ë§ˆì™• ê³„ë‹¨ì¸ì§€ ì—¬ë¶€(ëœë¤ ë§ê³  ì§ì ‘ ì§€ì •í•˜ê³  ì‹¶ì„ ë•Œë§Œ ì²´í¬)")]
+    public bool isConfuseStair = false;
+
+    [Tooltip("ì¼ë°˜ ê³„ë‹¨ ìŠ¤í”„ë¼ì´íŠ¸")]
+    public Sprite normalSprite;
+
+    [Tooltip("ëŒ€ë§ˆì™• ê³„ë‹¨ ìŠ¤í”„ë¼ì´íŠ¸")]
+    public Sprite confuseSprite;
 
     private SpriteRenderer sr;
-    private float spawnTime;
+    private BoxCollider2D col;
+
+    // íˆ¬ëª… ê³„ë‹¨ìš© íƒ€ì´ë¨¸
+    private float cycleTimer = 0f;
 
     private void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
+        col = GetComponent<BoxCollider2D>();
 
-        // Äİ¶óÀÌ´õ´Â "Æ®¸®°Å"·Î »ç¿ëÇÏ´Â °É ÃßÃµ (Player°¡ ¿Ã¶ó°¡¸é OnTriggerEnter2D È£Ãâ)
-        Collider2D col = GetComponent<Collider2D>();
+        // í”Œë ˆì´ì–´ëŠ” Rigidbody2D, ê³„ë‹¨ì€ íŠ¸ë¦¬ê±° ì¶©ëŒë¡œ ì“°ëŠ” ê±¸ ì „ì œë¡œ í•¨
         if (col != null)
-        {
             col.isTrigger = true;
-        }
     }
 
     private void OnEnable()
     {
-        // °è´ÜÀÌ »õ·Î È°¼ºÈ­µÉ ¶§¸¶´Ù ½Ã°£/¾ËÆÄ ÃÊ±âÈ­
-        spawnTime = Time.time;
+        ResetStair();
+    }
 
+    public void ResetStair()
+    {
+        cycleTimer = 0f;
+
+        // ìŠ¤í”„ë¼ì´íŠ¸/ì•ŒíŒŒ ì´ˆê¸°í™”
         if (sr != null)
         {
-            Color c = sr.color;
-            c.a = 1f;      // ½ÃÀÛÀº Ç×»ó ¿ÏÀü º¸ÀÌ´Â »óÅÂ
-            sr.color = c;
+            sr.color = new Color(sr.color.r, sr.color.g, sr.color.b, 1f);
+
+            // ê³„ë‹¨ íƒ€ì…ì— ë”°ë¼ ìŠ¤í”„ë¼ì´íŠ¸ ê²°ì •
+            if (stairKind == StairKind.ConfuseControl && confuseSprite != null)
+                sr.sprite = confuseSprite;
+            else if (normalSprite != null)
+                sr.sprite = normalSprite;
         }
+    }
+
+    // GameManagerì—ì„œ íƒ€ì…ì„ ë°”ê¿€ ë•Œ í˜¸ì¶œ
+    public void SetKind(StairKind kind)
+    {
+        stairKind = kind;
+
+        // ëŒ€ë§ˆì™• íƒ€ì…ì´ë©´ í”Œë˜ê·¸ë„ ìë™ true
+        isConfuseStair = (kind == StairKind.ConfuseControl);
+
+        ResetStair();
     }
 
     private void Update()
     {
-        // ¾Ï±â¿ë °è´ÜÀÌ¸é ÆäÀÌµå ÀÎ/¾Æ¿ô ·çÇÁ ½ÇÇà
+        // íˆ¬ëª… ê³„ë‹¨ë§Œ í˜ì´ë“œ ì²˜ë¦¬
         if (stairKind == StairKind.MemoryDisappear)
         {
-            UpdateFadeLoop();
+            UpdateFadeCycle();
         }
-
-        // (ÇÊ¿äÇÏ¸é ¿©±â ¾Æ·¡¿¡ ´Ù¸¥ Update ·ÎÁ÷ Ãß°¡)
     }
 
     /// <summary>
-    /// ¼­¼­È÷ »ç¶óÁ³´Ù°¡(1¡æ0), ¼­¼­È÷ ´Ù½Ã ³ªÅ¸³ª´Â(0¡æ1) ·çÇÁ
+    /// ì„œì„œíˆ ì‚¬ë¼ì¡Œë‹¤ê°€, ì•ˆ ë³´ì˜€ë‹¤ê°€, ë‹¤ì‹œ ì„œì„œíˆ ë‚˜íƒ€ë‚˜ëŠ” ì‚¬ì´í´
     /// </summary>
-    private void UpdateFadeLoop()
+    private void UpdateFadeCycle()
     {
         if (sr == null) return;
 
-        float cycle = fadeOutDuration + fadeInDuration;
-        if (cycle <= 0f) return;
+        cycleTimer += Time.deltaTime;
+        float t = cycleTimer;
 
-        float elapsed = Time.time - spawnTime;
-        float t = elapsed % cycle;   // ÇöÀç 1»çÀÌÅ¬ ³» À§Ä¡
+        float phase1 = visibleDuration;
+        float phase2 = phase1 + fadeOutDuration;
+        float phase3 = phase2 + hiddenDuration;
+        float phase4 = phase3 + fadeInDuration;
+
+        // í•œ ì‚¬ì´í´ ëë‚˜ë©´ ë‹¤ì‹œ 0ë¶€í„°
+        if (t > phase4)
+        {
+            cycleTimer = 0f;
+            t = 0f;
+        }
 
         Color c = sr.color;
 
-        if (t <= fadeOutDuration)
+        if (t <= phase1)
         {
-            // ÆäÀÌµå ¾Æ¿ô ±¸°£: 1 ¡æ 0
-            float outT = fadeOutDuration > 0f ? t / fadeOutDuration : 1f;
-            outT = Mathf.Clamp01(outT);
-            c.a = 1f - outT;   // 1¿¡¼­ 0À¸·Î °¨¼Ò
+            // ì™„ì „íˆ ë³´ì´ëŠ” êµ¬ê°„
+            c.a = 1f;
+        }
+        else if (t <= phase2)
+        {
+            // ì„œì„œíˆ ì‚¬ë¼ì§€ëŠ” êµ¬ê°„
+            float f = (t - phase1) / fadeOutDuration;   // 0 â†’ 1
+            c.a = Mathf.Lerp(1f, 0f, f);
+        }
+        else if (t <= phase3)
+        {
+            // ì™„ì „íˆ ì•ˆ ë³´ì´ëŠ” êµ¬ê°„
+            c.a = 0f;
         }
         else
         {
-            // ÆäÀÌµå ÀÎ ±¸°£: 0 ¡æ 1
-            float inTime = t - fadeOutDuration;                 // ÆäÀÌµå ÀÎ ÁøÇà ½Ã°£
-            float inT = fadeInDuration > 0f ? inTime / fadeInDuration : 1f;
-            inT = Mathf.Clamp01(inT);
-            c.a = inT;          // 0¿¡¼­ 1·Î Áõ°¡
+            // ë‹¤ì‹œ ì„œì„œíˆ ë‚˜íƒ€ë‚˜ëŠ” êµ¬ê°„
+            float f = (t - phase3) / fadeInDuration;   // 0 â†’ 1
+            c.a = Mathf.Lerp(0f, 1f, f);
         }
 
         sr.color = c;
     }
 
     /// <summary>
-    /// Player°¡ ÀÌ °è´Ü À§·Î ¿Ã¶ó¿ÔÀ» ¶§ È£Ãâ
-    /// - Player¿¡°Ô "Áö±İ ³Ê´Â ÀÌ °è´Ü ¹â°í ÀÖ´Ù" ¶ó°í ¾Ë·ÁÁÜ
-    /// - Player ÂÊ¿¡´Â SetCurrentStair(MonoBehaviour stair) °¡ ÀÖ¾î¾ß ÇÔ
+    /// í”Œë ˆì´ì–´ê°€ "ìœ„ì—ì„œ" ë°Ÿì•˜ì„ ë•Œë§Œ ëŒ€ë§ˆì™• ë°œë™
+    /// </summary>
+    /// <summary>
+    /// í”Œë ˆì´ì–´ê°€ "ìœ„ì—ì„œ" ë°Ÿì•˜ì„ ë•Œë§Œ ëŒ€ë§ˆì™• ë°œë™
     /// </summary>
     private void OnTriggerEnter2D(Collider2D other)
     {
+        // 1) Player ì•„ë‹ˆë©´ ë¬´ì‹œ
         if (!other.CompareTag("Player"))
             return;
 
+        // 2) ì´ ê³„ë‹¨ì´ í˜¼ë€ ê³„ë‹¨ì´ ì•„ë‹ˆë©´ ë¬´ì‹œ
+        //    (stairKind ë˜ëŠ” isConfuseStair ë‘˜ ì¤‘ í•˜ë‚˜ë¼ë„ trueë©´ ëŒ€ë§ˆì™• ê³„ë‹¨ìœ¼ë¡œ ì¸ì •)
+        if (!isConfuseStair && stairKind != StairKind.ConfuseControl)
+            return;
+
+        // 3) "ìœ„ì—ì„œ ë°Ÿì•˜ëŠ”ì§€" ì²´í¬ (ë„ˆë¬´ ë¹¡ì„¸ë©´ ì´ ì¡°ê±´ì€ ë‚˜ì¤‘ì— ì§€ì›Œë„ ë¨)
+        //    â†’ í”Œë ˆì´ì–´ ì¤‘ì‹¬ì´ ê³„ë‹¨ë³´ë‹¤ ì¡°ê¸ˆì´ë¼ë„ ìœ„ì— ìˆì„ ë•Œë§Œ ì¸ì •
+        if (other.transform.position.y <= transform.position.y)
+            return;
+
+        // 4) ì‹¤ì œ ë°œë™
         Player player = other.GetComponent<Player>();
         if (player != null)
         {
-            player.SetCurrentStair(this);
+            player.ActivateConfuseControl(0f); // 0ì´ë©´ Player ìª½ ê¸°ë³¸ê°’(ì˜ˆ: 15ì´ˆ) ì‚¬ìš©
+            Debug.Log("[Stair] Confuse stair triggered!");
         }
-    }
-
-    /// <summary>
-    /// GameManager¿¡¼­ °è´ÜÀ» Àç»ç¿ëÇÒ ¶§(À§Ä¡ ´Ù½Ã ÀâÀ» ¶§) È£ÃâÇØ ÁÖ¸é
-    /// Å¸ÀÌ¹ÖÀÌ ´Ù½Ã Ã³À½ºÎÅÍ ½ÃÀÛµÊ.
-    /// </summary>
-    public void ResetStair()
-    {
-        if (sr == null)
-            sr = GetComponent<SpriteRenderer>();
-
-        // Å¸ÀÌ¸Ó ¸®¼Â
-        spawnTime = Time.time;
-
-        // ¾ËÆÄ¸¦ ´Ù½Ã 1·Î
-        Color c = sr.color;
-        c.a = 1f;
-        sr.color = c;
-
-        enabled = true;
     }
 }
