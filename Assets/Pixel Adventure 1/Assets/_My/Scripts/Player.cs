@@ -11,7 +11,7 @@ public class Player : MonoBehaviour
     private Vector3 startPosition;
     private Vector3 oldPosition;
 
-    private int moveCnt = 0;   // 전체 이동 횟수
+    private int moveCnt = 0;    // 전체 이동 횟수
     private int TurnCnt = 0;
     private int SpawnCnt = 0;
     private bool isDie = false;
@@ -28,12 +28,12 @@ public class Player : MonoBehaviour
     private bool isFirstClick = true;
     private const float TIMEOUT_DURATION = 1.0f;
 
-    // ----------------------------------------------------
-    // 대마왕 효과
-    // ----------------------------------------------------
     [Header("조작 혼란 효과(대마왕)")]
+    [Tooltip("UI 컨트롤러 (Inspector에서 연결)")]
+    public ConfuseUIController confuseUIController;
+
     [Tooltip("기본 조작 혼란 지속 시간(초)")]
-    public float defaultConfuseDuration = 15f;
+    public float defaultConfuseDuration = 5f;
 
     // 대마왕 상태일 때 적용할 색
     public Color confuseTintColor = new Color(0.7f, 0.2f, 1f, 1f); // 보라빛
@@ -64,12 +64,17 @@ public class Player : MonoBehaviour
     [Tooltip("잔상이 켜진 후, 마지막 이동 후 이 시간이 지나면 잔상이 꺼집니다.")]
     public float afterimageDurationAfterLastMove = 1.0f;
 
-    private int continuousMoveCount = 0;          // 연속 이동 횟수
-    private float lastMoveTime = -999f;           // 마지막 이동 시각(연속 판단용)
+    private int continuousMoveCount = 0;        // 연속 이동 횟수
+    private float lastMoveTime = -999f;         // 마지막 이동 시각(연속 판단용)
     private float lastAfterimageMoveTime = -999f; // 잔상 켜진 상태에서의 마지막 이동 시각
-    private bool afterimageActive = false;        // 현재 잔상 on/off
+    private bool afterimageActive = false;      // 현재 잔상 on/off
 
     public bool IsDead => isDie;
+
+    // 외부에서 읽는 혼란 상태 API (UI/다른 스크립트에서 사용)
+    public bool IsControlConfused => isControlConfused;
+    public float GetConfuseTimeRemaining() => isControlConfused ? Mathf.Max(0f, confuseEndTime - Time.time) : 0f;
+    public float GetConfuseDuration() => defaultConfuseDuration;
 
     // ====================================================
     // Unity 콜백
@@ -104,6 +109,9 @@ public class Player : MonoBehaviour
                 spriteRenderer.sprite = originalSprite;
             }
 
+            // UI 컨트롤러에도 종료를 알림 (UI 숨기기 보장)
+            confuseUIController?.gameObject.SetActive(false);
+
             Debug.Log("[Player] 조작 혼란 종료");
         }
 
@@ -124,7 +132,7 @@ public class Player : MonoBehaviour
         bool leftInput = Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A);
         bool rightInput = Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D);
 
-        // ★ 대마왕 상태면 좌/우 입력을 서로 바꿔치기
+        // ★ 대마왕 상태면 좌/우 입력을 서로 바꿔치기 (조작 반전)
         if (isControlConfused)
         {
             bool tmp = leftInput;
@@ -136,7 +144,7 @@ public class Player : MonoBehaviour
         if (leftInput)
         {
             isTurn = true;
-            spriteRenderer.flipX = isTurn;
+            if (spriteRenderer != null) spriteRenderer.flipX = isTurn;
             CharMove();
             timerBarController?.ResetTimer();
             timerBarController?.EnableDeathCheck();
@@ -145,7 +153,7 @@ public class Player : MonoBehaviour
         if (rightInput)
         {
             isTurn = false;
-            spriteRenderer.flipX = isTurn;
+            if (spriteRenderer != null) spriteRenderer.flipX = isTurn;
             CharMove();
             timerBarController?.ResetTimer();
             timerBarController?.EnableDeathCheck();
@@ -186,7 +194,7 @@ public class Player : MonoBehaviour
     // ====================================================
     private void Init()
     {
-        anim.SetBool("Die", false);
+        if (anim != null) anim.SetBool("Die", false);
         transform.position = startPosition;
         oldPosition = startPosition;
 
@@ -194,7 +202,7 @@ public class Player : MonoBehaviour
         TurnCnt = 0;
         SpawnCnt = 0;
         isTurn = false;
-        spriteRenderer.flipX = isTurn;
+        if (spriteRenderer != null) spriteRenderer.flipX = isTurn;
         isDie = false;
 
         isFirstClick = true;
@@ -213,6 +221,10 @@ public class Player : MonoBehaviour
             spriteRenderer.color = originalColor;
             spriteRenderer.sprite = originalSprite;
         }
+
+        // UI 컨트롤러도 리셋
+        confuseUIController?.gameObject.SetActive(false);
+
 
         // 시작 시 타이머를 강제로 리셋하지 않음
         // timerBarController?.ResetTimer();
@@ -277,7 +289,7 @@ public class Player : MonoBehaviour
         if (moveCnt > 5)
             RespawnStair();
 
-        GameManager.Instance.AddScore();
+        GameManager.Instance?.AddScore();
     }
 
     private void MoveDirection()
@@ -288,19 +300,19 @@ public class Player : MonoBehaviour
             oldPosition += new Vector3(0.75f, 0.5f, 0);
 
         transform.position = oldPosition;
-        anim.SetTrigger("Move");
+        if (anim != null) anim.SetTrigger("Move");
     }
 
     private bool isFailTurn()
     {
         bool result = false;
 
-        if (GameManager.Instance.isTurn[TurnCnt] != isTurn)
+        if (GameManager.Instance != null && GameManager.Instance.isTurn[TurnCnt] != isTurn)
             result = true;
 
         TurnCnt++;
 
-        if (TurnCnt > GameManager.Instance.Stairs.Length - 1)
+        if (GameManager.Instance != null && TurnCnt > GameManager.Instance.Stairs.Length - 1)
             TurnCnt = 0;
 
         return result;
@@ -308,10 +320,11 @@ public class Player : MonoBehaviour
 
     private void RespawnStair()
     {
-        GameManager.Instance.SpawnStair(SpawnCnt);
+        if (GameManager.Instance != null)
+            GameManager.Instance.SpawnStair(SpawnCnt);
         SpawnCnt++;
 
-        if (SpawnCnt > GameManager.Instance.Stairs.Length - 1)
+        if (GameManager.Instance != null && SpawnCnt > GameManager.Instance.Stairs.Length - 1)
             SpawnCnt = 0;
     }
 
@@ -319,8 +332,8 @@ public class Player : MonoBehaviour
     {
         if (isDie) return;
 
-        GameManager.Instance.GameOver();
-        anim.SetBool("Die", true);
+        if (GameManager.Instance != null) GameManager.Instance.GameOver();
+        if (anim != null) anim.SetBool("Die", true);
         isDie = true;
 
         // 사망 시 잔상 중지 및 상태 리셋
@@ -335,13 +348,16 @@ public class Player : MonoBehaviour
             spriteRenderer.color = originalColor;
             spriteRenderer.sprite = originalSprite;
         }
+
+        // UI 컨트롤러도 숨김
+        confuseUIController?.gameObject.SetActive(false);
     }
 
     // Stair 에서 호출하는 대마왕 발동 함수
     public void ActivateConfuseControl(float duration)
     {
         if (duration <= 0f)
-            duration = defaultConfuseDuration;   // 예: 15초
+            duration = defaultConfuseDuration;
 
         isControlConfused = true;
         confuseEndTime = Time.time + duration;
@@ -349,14 +365,19 @@ public class Player : MonoBehaviour
         // 비주얼 변경 (보라색 + 스프라이트 교체)
         if (spriteRenderer != null)
         {
-            spriteRenderer.color = confuseTintColor;   // Inspector에서 보라색으로 설정된 값
+            spriteRenderer.color = confuseTintColor;    // Inspector에서 보라색으로 설정된 값
             if (confuseSprite != null)
                 spriteRenderer.sprite = confuseSprite;
         }
 
+        // UI를 활성화하여 Update()에서 위치 추적 및 게이지 표시를 시작하게 함
+        if (confuseUIController != null && !confuseUIController.confusedBar.activeSelf)
+        {
+            confuseUIController.confusedBar.SetActive(true);
+        }
+
         Debug.Log($"[Player] 조작 혼란 시작! {duration}초 동안 좌우 반전");
     }
-
 
     public void ButtonRestart()
     {
@@ -371,8 +392,8 @@ public class Player : MonoBehaviour
 
         // 3) 실제 게임 리셋
         Init();
-        GameManager.Instance.Init();
-        GameManager.Instance.InitStairs();
+        GameManager.Instance?.Init();
+        GameManager.Instance?.InitStairs();
     }
 
     public void SetCurrentStair(MonoBehaviour stair)

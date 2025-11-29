@@ -410,6 +410,11 @@ MonoBehaviour:
   isConfuseStair: 0
   normalSprite: {fileID: 341431597, guid: 413986c4a668c374d8de72a47621b531, type: 3}
   confuseSprite: {fileID: 1525092577, guid: 413986c4a668c374d8de72a47621b531, type: 3}
+  standEps: 0.05
+  requiredOverlapRatio: 0.5
+  settledTime: 0.06
+  monitorTimeout: 1
+  upwardIgnoreVelocity: 1
 --- !u!1 &33326875
 GameObject:
   m_ObjectHideFlags: 0
@@ -568,6 +573,11 @@ MonoBehaviour:
   isConfuseStair: 0
   normalSprite: {fileID: 341431597, guid: 413986c4a668c374d8de72a47621b531, type: 3}
   confuseSprite: {fileID: 1525092577, guid: 413986c4a668c374d8de72a47621b531, type: 3}
+  standEps: 0.05
+  requiredOverlapRatio: 0.5
+  settledTime: 0.06
+  monitorTimeout: 1
+  upwardIgnoreVelocity: 1
 --- !u!1 &50399851
 GameObject:
   m_ObjectHideFlags: 0
@@ -761,6 +771,11 @@ MonoBehaviour:
   isConfuseStair: 0
   normalSprite: {fileID: 341431597, guid: 413986c4a668c374d8de72a47621b531, type: 3}
   confuseSprite: {fileID: 1525092577, guid: 413986c4a668c374d8de72a47621b531, type: 3}
+  standEps: 0.05
+  requiredOverlapRatio: 0.5
+  settledTime: 0.06
+  monitorTimeout: 1
+  upwardIgnoreVelocity: 1
 --- !u!1 &83980594
 GameObject:
   m_ObjectHideFlags: 0
@@ -1142,6 +1157,11 @@ MonoBehaviour:
   isConfuseStair: 0
   normalSprite: {fileID: 341431597, guid: 413986c4a668c374d8de72a47621b531, type: 3}
   confuseSprite: {fileID: 1525092577, guid: 413986c4a668c374d8de72a47621b531, type: 3}
+  standEps: 0.05
+  requiredOverlapRatio: 0.5
+  settledTime: 0.06
+  monitorTimeout: 1
+  upwardIgnoreVelocity: 1
 --- !u!1 &143413453
 GameObject:
   m_ObjectHideFlags: 0
@@ -1182,6 +1202,82 @@ Transform:
   - {fileID: 1924306033}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &181275487
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 181275488}
+  - component: {fileID: 181275490}
+  - component: {fileID: 181275489}
+  m_Layer: 5
+  m_Name: ConfusedBar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &181275488
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 181275487}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1762089627}
+  m_Father: {fileID: 543500721}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -280}
+  m_SizeDelta: {x: 400, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &181275489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 181275487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 0.9803922, b: 0.9803922, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: -6676564034453352251, guid: 84e73c5fcbc3d324a9bebf3715abc565, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &181275490
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 181275487}
+  m_CullTransparentMesh: 1
 --- !u!1 &289377255
 GameObject:
   m_ObjectHideFlags: 0
@@ -1596,6 +1692,11 @@ MonoBehaviour:
   isConfuseStair: 0
   normalSprite: {fileID: 341431597, guid: 413986c4a668c374d8de72a47621b531, type: 3}
   confuseSprite: {fileID: 1525092577, guid: 413986c4a668c374d8de72a47621b531, type: 3}
+  standEps: 0.05
+  requiredOverlapRatio: 0.5
+  settledTime: 0.06
+  monitorTimeout: 1
+  upwardIgnoreVelocity: 1
 --- !u!1 &305169591
 GameObject:
   m_ObjectHideFlags: 0
@@ -1754,6 +1855,11 @@ MonoBehaviour:
   isConfuseStair: 0
   normalSprite: {fileID: 341431597, guid: 413986c4a668c374d8de72a47621b531, type: 3}
   confuseSprite: {fileID: 1525092577, guid: 413986c4a668c374d8de72a47621b531, type: 3}
+  standEps: 0.05
+  requiredOverlapRatio: 0.5
+  settledTime: 0.06
+  monitorTimeout: 1
+  upwardIgnoreVelocity: 1
 --- !u!1 &306313134
 GameObject:
   m_ObjectHideFlags: 0
@@ -2097,144 +2203,6 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 389746862}
-  m_CullTransparentMesh: 1
---- !u!1 &397270586
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 397270587}
-  - component: {fileID: 397270589}
-  - component: {fileID: 397270588}
-  m_Layer: 5
-  m_Name: Commander
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &397270587
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 397270586}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 543500721}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1117, y: 559.07}
-  m_SizeDelta: {x: 633.9235, y: 485.8677}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &397270588
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 397270586}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_text: '<- & A Key = Left Move
-
-    -> & D Key = Right Move'
-  m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
-  m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
-  m_fontColor32:
-    serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
-  m_enableVertexGradient: 0
-  m_colorMode: 3
-  m_fontColorGradient:
-    topLeft: {r: 1, g: 1, b: 1, a: 1}
-    topRight: {r: 1, g: 1, b: 1, a: 1}
-    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
-    bottomRight: {r: 1, g: 1, b: 1, a: 1}
-  m_fontColorGradientPreset: {fileID: 0}
-  m_spriteAsset: {fileID: 0}
-  m_tintAllSprites: 0
-  m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: -1183493901
-  m_overrideHtmlColors: 0
-  m_faceColor:
-    serializedVersion: 2
-    rgba: 4294967295
-  m_fontSize: 60
-  m_fontSizeBase: 60
-  m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
-  m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
-  m_textAlignment: 65535
-  m_characterSpacing: 0
-  m_wordSpacing: 0
-  m_lineSpacing: 0
-  m_lineSpacingMax: 0
-  m_paragraphSpacing: 0
-  m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 1
-  m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 0}
-  parentLinkedComponent: {fileID: 0}
-  m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
-  m_enableExtraPadding: 0
-  checkPaddingRequired: 0
-  m_isRichText: 1
-  m_EmojiFallbackSupport: 1
-  m_parseCtrlCharacters: 1
-  m_isOrthographic: 1
-  m_isCullingEnabled: 0
-  m_horizontalMapping: 0
-  m_verticalMapping: 0
-  m_uvLineOffset: 0
-  m_geometrySortingOrder: 0
-  m_IsTextObjectScaleStatic: 0
-  m_VertexBufferAutoSizeReduction: 0
-  m_useMaxVisibleDescender: 1
-  m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -115.07855, w: 0}
-  m_isUsingLegacyAnimationComponent: 0
-  m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
-  m_baseMaterial: {fileID: 0}
-  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!222 &397270589
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 397270586}
   m_CullTransparentMesh: 1
 --- !u!1 &462902111
 GameObject:
@@ -2619,7 +2587,7 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 519420031}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -2651,9 +2619,10 @@ RectTransform:
   - {fileID: 1199474621}
   - {fileID: 1510873503}
   - {fileID: 1890328666}
-  - {fileID: 397270587}
   - {fileID: 50399852}
   - {fileID: 1590052529}
+  - {fileID: 1499080471}
+  - {fileID: 181275488}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3252,6 +3221,11 @@ MonoBehaviour:
   isConfuseStair: 0
   normalSprite: {fileID: 341431597, guid: 413986c4a668c374d8de72a47621b531, type: 3}
   confuseSprite: {fileID: 1525092577, guid: 413986c4a668c374d8de72a47621b531, type: 3}
+  standEps: 0.05
+  requiredOverlapRatio: 0.5
+  settledTime: 0.06
+  monitorTimeout: 1
+  upwardIgnoreVelocity: 1
 --- !u!1 &798111297
 GameObject:
   m_ObjectHideFlags: 0
@@ -3732,6 +3706,11 @@ MonoBehaviour:
   isConfuseStair: 0
   normalSprite: {fileID: 341431597, guid: 413986c4a668c374d8de72a47621b531, type: 3}
   confuseSprite: {fileID: 1525092577, guid: 413986c4a668c374d8de72a47621b531, type: 3}
+  standEps: 0.05
+  requiredOverlapRatio: 0.5
+  settledTime: 0.06
+  monitorTimeout: 1
+  upwardIgnoreVelocity: 1
 --- !u!1 &971462865
 GameObject:
   m_ObjectHideFlags: 0
@@ -3890,6 +3869,11 @@ MonoBehaviour:
   isConfuseStair: 0
   normalSprite: {fileID: 341431597, guid: 413986c4a668c374d8de72a47621b531, type: 3}
   confuseSprite: {fileID: 1525092577, guid: 413986c4a668c374d8de72a47621b531, type: 3}
+  standEps: 0.05
+  requiredOverlapRatio: 0.5
+  settledTime: 0.06
+  monitorTimeout: 1
+  upwardIgnoreVelocity: 1
 --- !u!1 &1130673782
 GameObject:
   m_ObjectHideFlags: 0
@@ -4255,6 +4239,7 @@ GameObject:
   - component: {fileID: 1214495657}
   - component: {fileID: 1214495659}
   - component: {fileID: 1214495658}
+  - component: {fileID: 1214495660}
   m_Layer: 0
   m_Name: Idle (32x32)_0
   m_TagString: Player
@@ -4371,6 +4356,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript1
   timerBarController: {fileID: 1732525791}
+  confuseUIController: {fileID: 1499080472}
   defaultConfuseDuration: 5
   confuseTintColor: {r: 0.7, g: 0.2, b: 1, a: 1}
   confuseSprite: {fileID: 0}
@@ -4567,6 +4553,26 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.32, y: 0.32}
   m_EdgeRadius: 0
+--- !u!114 &1214495660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1214495651}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed1987f8a886306498dbe43fb522369b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ConfuseUIController
+  confusedBar: {fileID: 181275487}
+  fillGauge: {fileID: 1762089629}
+  canvasRect: {fileID: 543500721}
+  player: {fileID: 1214495655}
+  autoFindPlayer: 1
+  worldOffset: {x: 0, y: 1.2, z: 0}
+  followPlayer: 1
+  debugLogs: 0
 --- !u!1 &1281128329
 GameObject:
   m_ObjectHideFlags: 0
@@ -4777,6 +4783,11 @@ MonoBehaviour:
   isConfuseStair: 0
   normalSprite: {fileID: 341431597, guid: 413986c4a668c374d8de72a47621b531, type: 3}
   confuseSprite: {fileID: 1525092577, guid: 413986c4a668c374d8de72a47621b531, type: 3}
+  standEps: 0.05
+  requiredOverlapRatio: 0.5
+  settledTime: 0.06
+  monitorTimeout: 1
+  upwardIgnoreVelocity: 1
 --- !u!1 &1325273713
 GameObject:
   m_ObjectHideFlags: 0
@@ -5071,6 +5082,11 @@ MonoBehaviour:
   isConfuseStair: 0
   normalSprite: {fileID: 341431597, guid: 413986c4a668c374d8de72a47621b531, type: 3}
   confuseSprite: {fileID: 1525092577, guid: 413986c4a668c374d8de72a47621b531, type: 3}
+  standEps: 0.05
+  requiredOverlapRatio: 0.5
+  settledTime: 0.06
+  monitorTimeout: 1
+  upwardIgnoreVelocity: 1
 --- !u!1 &1335770280
 GameObject:
   m_ObjectHideFlags: 0
@@ -5229,6 +5245,11 @@ MonoBehaviour:
   isConfuseStair: 0
   normalSprite: {fileID: 341431597, guid: 413986c4a668c374d8de72a47621b531, type: 3}
   confuseSprite: {fileID: 1525092577, guid: 413986c4a668c374d8de72a47621b531, type: 3}
+  standEps: 0.05
+  requiredOverlapRatio: 0.5
+  settledTime: 0.06
+  monitorTimeout: 1
+  upwardIgnoreVelocity: 1
 --- !u!1 &1373219814
 GameObject:
   m_ObjectHideFlags: 0
@@ -5576,6 +5597,11 @@ MonoBehaviour:
   isConfuseStair: 0
   normalSprite: {fileID: 341431597, guid: 413986c4a668c374d8de72a47621b531, type: 3}
   confuseSprite: {fileID: 1525092577, guid: 413986c4a668c374d8de72a47621b531, type: 3}
+  standEps: 0.05
+  requiredOverlapRatio: 0.5
+  settledTime: 0.06
+  monitorTimeout: 1
+  upwardIgnoreVelocity: 1
 --- !u!1 &1479469831
 GameObject:
   m_ObjectHideFlags: 0
@@ -5651,6 +5677,58 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1479469831}
   m_CullTransparentMesh: 1
+--- !u!1 &1499080470
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1499080471}
+  - component: {fileID: 1499080472}
+  m_Layer: 0
+  m_Name: ConfuseUIController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1499080471
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1499080470}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -281, z: 0}
+  m_LocalScale: {x: 5.3681293, y: 5.3681293, z: 5.3681293}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543500721}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1499080472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1499080470}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed1987f8a886306498dbe43fb522369b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ConfuseUIController
+  confusedBar: {fileID: 181275487}
+  fillGauge: {fileID: 1762089629}
+  canvasRect: {fileID: 543500721}
+  player: {fileID: 1214495655}
+  autoFindPlayer: 0
+  worldOffset: {x: 0, y: 1.2, z: 0}
+  followPlayer: 1
+  debugLogs: 0
 --- !u!1 &1510873502
 GameObject:
   m_ObjectHideFlags: 0
@@ -5687,7 +5765,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -433, y: 777}
+  m_AnchoredPosition: {x: -383, y: 777}
   m_SizeDelta: {x: 250, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1510873504
@@ -10894,6 +10972,11 @@ MonoBehaviour:
   isConfuseStair: 0
   normalSprite: {fileID: 341431597, guid: 413986c4a668c374d8de72a47621b531, type: 3}
   confuseSprite: {fileID: 1525092577, guid: 413986c4a668c374d8de72a47621b531, type: 3}
+  standEps: 0.05
+  requiredOverlapRatio: 0.5
+  settledTime: 0.06
+  monitorTimeout: 1
+  upwardIgnoreVelocity: 1
 --- !u!1 &1590052528
 GameObject:
   m_ObjectHideFlags: 0
@@ -11308,6 +11391,11 @@ MonoBehaviour:
   isConfuseStair: 0
   normalSprite: {fileID: 341431597, guid: 413986c4a668c374d8de72a47621b531, type: 3}
   confuseSprite: {fileID: 1525092577, guid: 413986c4a668c374d8de72a47621b531, type: 3}
+  standEps: 0.05
+  requiredOverlapRatio: 0.5
+  settledTime: 0.06
+  monitorTimeout: 1
+  upwardIgnoreVelocity: 1
 --- !u!1 &1663398230
 GameObject:
   m_ObjectHideFlags: 0
@@ -11466,6 +11554,11 @@ MonoBehaviour:
   isConfuseStair: 0
   normalSprite: {fileID: 341431597, guid: 413986c4a668c374d8de72a47621b531, type: 3}
   confuseSprite: {fileID: 1525092577, guid: 413986c4a668c374d8de72a47621b531, type: 3}
+  standEps: 0.05
+  requiredOverlapRatio: 0.5
+  settledTime: 0.06
+  monitorTimeout: 1
+  upwardIgnoreVelocity: 1
 --- !u!1 &1731515871
 GameObject:
   m_ObjectHideFlags: 0
@@ -11644,6 +11737,102 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1732525789}
+  m_CullTransparentMesh: 1
+--- !u!1 &1762089626
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1762089627}
+  - component: {fileID: 1762089630}
+  - component: {fileID: 1762089629}
+  - component: {fileID: 1762089628}
+  m_Layer: 5
+  m_Name: Fill Gauge
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1762089627
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1762089626}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 181275488}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 400, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1762089628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1762089626}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed1987f8a886306498dbe43fb522369b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ConfuseUIController
+  confusedBar: {fileID: 181275487}
+  fillGauge: {fileID: 1762089629}
+  canvasRect: {fileID: 543500721}
+  player: {fileID: 1214495655}
+  autoFindPlayer: 0
+  worldOffset: {x: 0, y: 1.2, z: 0}
+  followPlayer: 1
+  debugLogs: 0
+--- !u!114 &1762089629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1762089626}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.4, g: 0.2, b: 0.6, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: -1847056366180053114, guid: 84e73c5fcbc3d324a9bebf3715abc565, type: 3}
+  m_Type: 3
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 0
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1762089630
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1762089626}
   m_CullTransparentMesh: 1
 --- !u!1 &1801602666
 GameObject:
@@ -11986,6 +12175,11 @@ MonoBehaviour:
   isConfuseStair: 0
   normalSprite: {fileID: 341431597, guid: 413986c4a668c374d8de72a47621b531, type: 3}
   confuseSprite: {fileID: 1525092577, guid: 413986c4a668c374d8de72a47621b531, type: 3}
+  standEps: 0.05
+  requiredOverlapRatio: 0.5
+  settledTime: 0.06
+  monitorTimeout: 1
+  upwardIgnoreVelocity: 1
 --- !u!1 &1825758557
 GameObject:
   m_ObjectHideFlags: 0
@@ -12194,6 +12388,11 @@ MonoBehaviour:
   isConfuseStair: 0
   normalSprite: {fileID: 341431597, guid: 413986c4a668c374d8de72a47621b531, type: 3}
   confuseSprite: {fileID: 1525092577, guid: 413986c4a668c374d8de72a47621b531, type: 3}
+  standEps: 0.05
+  requiredOverlapRatio: 0.5
+  settledTime: 0.06
+  monitorTimeout: 1
+  upwardIgnoreVelocity: 1
 --- !u!1 &1885681416
 GameObject:
   m_ObjectHideFlags: 0
@@ -12530,7 +12729,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.0098066, y: -0.0018453}
+  m_AnchoredPosition: {x: -0.00982666, y: -0.0018453}
   m_SizeDelta: {x: 1081.2, y: 1917.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1895524143
@@ -12729,6 +12928,11 @@ MonoBehaviour:
   isConfuseStair: 0
   normalSprite: {fileID: 341431597, guid: 413986c4a668c374d8de72a47621b531, type: 3}
   confuseSprite: {fileID: 1525092577, guid: 413986c4a668c374d8de72a47621b531, type: 3}
+  standEps: 0.05
+  requiredOverlapRatio: 0.5
+  settledTime: 0.06
+  monitorTimeout: 1
+  upwardIgnoreVelocity: 1
 --- !u!1 &1924306032
 GameObject:
   m_ObjectHideFlags: 0
@@ -13340,6 +13544,11 @@ MonoBehaviour:
   isConfuseStair: 0
   normalSprite: {fileID: 341431597, guid: 413986c4a668c374d8de72a47621b531, type: 3}
   confuseSprite: {fileID: 1525092577, guid: 413986c4a668c374d8de72a47621b531, type: 3}
+  standEps: 0.05
+  requiredOverlapRatio: 0.5
+  settledTime: 0.06
+  monitorTimeout: 1
+  upwardIgnoreVelocity: 1
 --- !u!1 &2022146661
 GameObject:
   m_ObjectHideFlags: 0
@@ -13498,6 +13707,11 @@ MonoBehaviour:
   isConfuseStair: 0
   normalSprite: {fileID: 341431597, guid: 413986c4a668c374d8de72a47621b531, type: 3}
   confuseSprite: {fileID: 1525092577, guid: 413986c4a668c374d8de72a47621b531, type: 3}
+  standEps: 0.05
+  requiredOverlapRatio: 0.5
+  settledTime: 0.06
+  monitorTimeout: 1
+  upwardIgnoreVelocity: 1
 --- !u!1 &2023193360
 GameObject:
   m_ObjectHideFlags: 0
